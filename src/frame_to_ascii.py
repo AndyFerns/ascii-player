@@ -1,38 +1,30 @@
 import cv2
 from colorama import Fore, Style, init
-
-init()  # initialize colorama on Windows
+init()
 
 CHARS = "@%#*+=-:. "
-
-def pixel_to_ansi(r, g, b):
-    # Map RGB to basic ANSI 16 colors (feel free to improve this for 256-color later)
-    if r > 200 and g > 200 and b > 200:
-        return Fore.WHITE
-    elif r > 200:
-        return Fore.RED
-    elif g > 200:
-        return Fore.GREEN
-    elif b > 200:
-        return Fore.BLUE
-    elif r > 100 and g > 100:
-        return Fore.YELLOW
-    elif g > 100 and b > 100:
-        return Fore.CYAN
-    elif r > 100 and b > 100:
-        return Fore.MAGENTA
-    else:
-        return Fore.BLACK
+COLOR_MAP = [
+    Fore.WHITE,
+    Fore.LIGHTWHITE_EX,
+    Fore.LIGHTYELLOW_EX,
+    Fore.YELLOW,
+    Fore.LIGHTRED_EX,
+    Fore.RED,
+    Fore.MAGENTA,
+    Fore.BLUE,
+    Fore.CYAN,
+    Fore.GREEN,
+]
 
 def convert_frame_to_ascii(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     ascii_image = ""
-    for i, row in enumerate(gray):
+    for row in gray:
         line = ""
-        for j, pixel in enumerate(row):
-            char = CHARS[int(pixel * len(CHARS) / 256)]
-            b, g, r = frame[i][j]
-            color = pixel_to_ansi(r, g, b)
-            line += f"{color}{char}{Style.RESET_ALL}"
+        for pixel in row:
+            val = int(pixel)
+            idx = min(len(CHARS) - 1, val * len(CHARS) // 256)
+            color = COLOR_MAP[val * len(COLOR_MAP) // 256]
+            line += f"{color}{CHARS[idx]}{Style.RESET_ALL}"
         ascii_image += line + "\n"
     return ascii_image
