@@ -1,0 +1,7 @@
+
+opencv-python
+numpy
+pillow
+yt-dlp
+ffmpeg-python
+colorama
